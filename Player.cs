@@ -8,11 +8,13 @@ public class Player
     public string Name { get; }
     public double X { get; private set; }
     public double Y { get; private set; }
+    // шаг передвижения /direction
     private double _vx, _vy;
+    // your team
     public Team? Team { get; set; } = null;
 
     // making constants
-    private const double MaxSpeed = 5; //max
+    private const double MaxSpeed = 5; 
     private const double MaxKickSpeed = 25;
     private const double BallKickDistance = 10;
 
@@ -56,7 +58,7 @@ public class Player
         return Math.Sqrt(dx * dx + dy * dy);
     }
 
-    // moving forward
+    // moving towards the ball
     public void MoveTowardsBall()
     {
         var ballPosition = Team!.GetBallPosition();
@@ -66,6 +68,7 @@ public class Player
         _vx = dx / ratio;
         _vy = dy / ratio;
     }
+
 
     public void Move()
     {
