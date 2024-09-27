@@ -10,7 +10,7 @@ namespace JalgpalliMang
     {
         static void Main(string[] args)
         {
-            
+            //
         }
     }
 }
