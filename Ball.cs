@@ -9,7 +9,6 @@ namespace JalgpalliMang
 {
     public class Ball
     {
-        // objects of Ball class
         public double X { get; private set; }
         public double Y { get; private set; }
 
@@ -17,7 +16,6 @@ namespace JalgpalliMang
 
         private Game _game;
 
-        // construct
         public Ball(double x, double y, Game game)
         {
             _game = game;
@@ -25,14 +23,12 @@ namespace JalgpalliMang
             Y = y;
         }
 
-        // setting the speed of the ball
         public void SetSpeed(double vx, double vy)
         {
             _vx = vx;
             _vy = vy;
         }
 
-        // moving the ball 
         public void Move()
         {
             double newX = X + _vx;

@@ -8,7 +8,6 @@ namespace JalgpalliMang
 {
     public class Stadium
     {
-        // construct
         public Stadium(int width, int height)
         {
             Width = width;
@@ -19,10 +18,10 @@ namespace JalgpalliMang
 
         public int Height { get; }
 
-        // if the ball is in the field
         public bool IsIn(double x, double y)
         {
             return x >= 0 && x < Width && y >= 0 && y < Height;
         }
+
     }
 }
