@@ -9,6 +9,7 @@ namespace JalgpalliMang
 {
     public class Ball
     {
+        // objects
         public double X { get; private set; }
         public double Y { get; private set; }
 
@@ -16,6 +17,7 @@ namespace JalgpalliMang
 
         private Game _game;
 
+        // construct
         public Ball(double x, double y, Game game)
         {
             _game = game;
@@ -23,12 +25,15 @@ namespace JalgpalliMang
             Y = y;
         }
 
+        // palli kiiruse seadistamine
         public void SetSpeed(double vx, double vy)
         {
+            // Määrake kiirus esialgu (pall on löödud)
             _vx = vx;
             _vy = vy;
         }
 
+        // palli liigutamine 
         public void Move()
         {
             double newX = X + _vx;
