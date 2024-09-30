@@ -1,33 +1,27 @@
-﻿using System;
+﻿
+using System;
 
 namespace JalgpalliMang;
 
 public class Player
 {
-    // objects of the class
     public string Name { get; }
     public double X { get; private set; }
     public double Y { get; private set; }
-    // шаг передвижения /direction
     private double _vx, _vy;
-    // your team
     public Team? Team { get; set; } = null;
 
-    // konstantid
     private const double MaxSpeed = 5;
     private const double MaxKickSpeed = 25;
-    private const double BallKickDistance = 2;
-
+    private const double BallKickDistance = 10;
 
     private Random _random = new Random();
 
-    // construct 
     public Player(string name)
     {
         Name = name;
     }
 
-    // construct
     public Player(string name, double x, double y, Team team)
     {
         Name = name;
@@ -36,20 +30,17 @@ public class Player
         Team = team;
     }
 
-    // mängija seadistuspositsioon
     public void SetPosition(double x, double y)
     {
         X = x;
         Y = y;
     }
 
-    // absoluutse positsiooni saamine meeskonnale
     public (double, double) GetAbsolutePosition()
     {
         return Team!.Game.GetPositionForTeam(Team, X, Y);
     }
 
-    // pallini distantsi saamine
     public double GetDistanceToBall()
     {
         var ballPosition = Team!.GetBallPosition();
@@ -58,7 +49,6 @@ public class Player
         return Math.Sqrt(dx * dx + dy * dy);
     }
 
-    // liikudes palli poole
     public void MoveTowardsBall()
     {
         var ballPosition = Team!.GetBallPosition();
@@ -68,7 +58,6 @@ public class Player
         _vx = dx / ratio;
         _vy = dy / ratio;
     }
-
 
     public void Move()
     {
@@ -83,7 +72,7 @@ public class Player
             Team.SetBallSpeed(
                 MaxKickSpeed * _random.NextDouble(),
                 MaxKickSpeed * (_random.NextDouble() - 0.5)
-                );
+            );
         }
 
         var newX = X + _vx;
@@ -98,5 +87,50 @@ public class Player
         {
             _vx = _vy = 0;
         }
+    }
+
+    public static void DrawPlayers(Game game)
+    {
+        for (int y = 1; y < game.Stadium.Height; y++) 
+        {
+            for (int x = 1; x < game.Stadium.Width - 1; x++) 
+            {
+                char symb = ' ';
+
+
+                if ((int)game.Ball.X == x && (int)game.Ball.Y == y)
+                {
+                    symb = 'O'; 
+                    Console.ForegroundColor = ConsoleColor.Red; 
+                }
+
+
+                foreach (var player in game.HomeTeam.Players)
+                {
+                    if ((int)player.X == x && (int)player.Y == y)
+                    {
+                        symb = 'A';
+                        Console.ForegroundColor = ConsoleColor.Green; 
+                    }
+                }
+
+                foreach (var player in game.AwayTeam.Players)
+                {
+                    if ((int)player.X == x && (int)player.Y == y)
+                    {
+                        symb = 'B'; 
+                        Console.ForegroundColor = ConsoleColor.Yellow; 
+                    }
+                }
+
+                if (symb != ' ')
+                {
+                    Console.SetCursorPosition(x, y); 
+                    Console.Write(symb);
+                }
+            }
+        }
+
+        Console.ResetColor();
     }
 }

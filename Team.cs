@@ -1,98 +1,72 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace JalgpalliMang
+namespace JalgpalliMang;
+
+public class Team
 {
-    public class Team
+    public List<Player> Players { get; } = new List<Player>();
+    public string Name { get; private set; }
+    public Game Game { get; set; }
+
+    public Team(string name)
     {
-        // objects 
-        public List<Player> Players { get; } = new List<Player>();
-        public string Name { get; private set; }
-        public Game Game { get; set; }
+        Name = name;
+    }
 
-        // construct
-        public Team(string name)
+    public void StartGame(int width, int height)
+    {
+        Random rnd = new Random();
+
+        
+        const double taane = 1;
+
+        foreach (var player in Players)
         {
-            Name = name;
+            player.SetPosition(
+                taane + rnd.NextDouble() * (width - 2 * taane),  
+                taane + rnd.NextDouble() * (height - 2 * taane)  
+            );
         }
+    }
 
-        // mängijate loomine ja nende väljakule seadmine (juhuslik)
-        public void StartGame(int width, int height, bool isHomeTeam)
+    public void AddPlayer(Player player)
+    {
+        if (player.Team != null) return;
+        Players.Add(player);
+        player.Team = this;
+    }
+
+    public (double, double) GetBallPosition()
+    {
+        return Game.GetBallPositionForTeam(this);
+    }
+
+    public void SetBallSpeed(double vx, double vy)
+    {
+        Game.SetBallSpeedForTeam(this, vx, vy);
+    }
+
+    public Player GetClosestPlayerToBall()
+    {
+        Player closestPlayer = Players[0];
+        double bestDistance = Double.MaxValue;
+        foreach (var player in Players)
         {
-            Random rnd = new Random();
-
-            // Define a buffer from the edges
-            double buffer = 1; // Adjust this value if needed
-
-            foreach (var player in Players)
+            var distance = player.GetDistanceToBall();
+            if (distance < bestDistance)
             {
-                double xPos;
-                double yPos = buffer + rnd.NextDouble() * (height - 2 * buffer);  // Players can be placed anywhere on the Y axis with a buffer
-
-                if (isHomeTeam)
-                {
-                    // Home team players on the left half of the field, avoiding the border
-                    xPos = buffer + rnd.NextDouble() * ((width / 2) - buffer);  // X position from buffer to (width / 2 - buffer)
-                }
-                else
-                {
-                    // Away team players on the right half of the field, avoiding the border
-                    xPos = (width / 2) + buffer + rnd.NextDouble() * ((width / 2) - buffer);  // X position from (width / 2 + buffer) to (width - buffer)
-                }
-
-                // Set the player's position
-                player.SetPosition(xPos, yPos);
+                closestPlayer = player;
+                bestDistance = distance;
             }
         }
 
-        // kui mängijad juba mingis meeskonnas, kui mitte siis mängija lisamine nimekirja
-        public void AddPlayer(Player player)
-        {
-            if (player.Team != null) return;
-            Players.Add(player);
-            player.Team = this;
-        }
+        return closestPlayer;
+    }
 
-        // palli asendi saamine sõltuvalt meeskonnast
-        public (double, double) GetBallPosition()
-        {
-            return Game.GetBallPositionForTeam(this);
-        }
-
-        // palli kiiruse seadmine sõltuvalt meeskonnast
-        public void SetBallSpeed(double vx, double vy)
-        {
-            Game.SetBallSpeedForTeam(this, vx, vy);
-        }
-
-        public Player GetClosestPlayerToBall()
-        {
-            Player closestPlayer = Players[0];
-            double bestDistance = Double.MaxValue;
-            foreach (var player in Players)
-            {
-                var distance = player.GetDistanceToBall();
-                if (distance < bestDistance)
-                {
-                    closestPlayer = player;
-                    bestDistance = distance;
-                }
-            }
-
-            return closestPlayer;
-        }
-
-
-        // väljakul mängijate liigutamine
-        public void Move()
-        {
-            GetClosestPlayerToBall().MoveTowardsBall();
-            Players.ForEach(player => player.Move());
-        }
-
-
+    public void Move()
+    {
+        GetClosestPlayerToBall().MoveTowardsBall();
+        Players.ForEach(player => player.Move());
     }
 }
