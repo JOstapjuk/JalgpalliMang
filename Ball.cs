@@ -34,16 +34,37 @@ public class Ball
     {
         double newX = X + _vx;
         double newY = Y + _vy;
-        if (_game.Stadium.IsIn(newX, newY))
+
+        // Check if the ball hits the horizontal borders (top and bottom)
+        if (newY <= 0 || newY >= _game.Stadium.Height - 1)
         {
-            X = newX;
-            Y = newY;
+            _vy = -_vy; // Reverse vertical velocity
+            newY = Y + _vy; // Update the new position after bouncing
         }
-        else
+
+        // Check if the ball hits the vertical borders (left and right)
+        if (newX <= 0 || newX >= _game.Stadium.Width - 1)
         {
-            _vx = -1;
-            _vy = -1;
+            // Check for a goal in the home team's goal (left side)
+            if (newX <= 0 && newY >= _game.Stadium.Height / 2 - 2 && newY <= _game.Stadium.Height / 2 + 2)
+            {
+                _game.ScoreGoal(_game.AwayTeam); // Away team scores
+                return; // Exit since we are resetting the ball
+            }
+            // Check for a goal in the away team's goal (right side)
+            if (newX >= _game.Stadium.Width - 1 && newY >= _game.Stadium.Height / 2 - 2 && newY <= _game.Stadium.Height / 2 + 2)
+            {
+                _game.ScoreGoal(_game.HomeTeam); // Home team scores
+                return; // Exit since we are resetting the ball
+            }
+
+            _vx = -_vx; // Reverse horizontal velocity for bouncing
+            newX = X + _vx; // Update the new position after bouncing
         }
+
+        // Update the ball's position
+        X = newX;
+        Y = newY;
     }
 
 }

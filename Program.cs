@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
+using System.Diagnostics;
+
 
 namespace JalgpalliMang
 {
@@ -8,7 +10,6 @@ namespace JalgpalliMang
     {
         static void Main(string[] args)
         {
-
             Stadium stadium = new Stadium(80, 25);
 
             Team homeTeam = new Team("Home Team");
@@ -24,23 +25,23 @@ namespace JalgpalliMang
                 homeTeam.AddPlayer(new Player($"A{i}"));
             }
 
-           
-
             Game game = new Game(homeTeam, awayTeam, stadium);
-
             game.Start();
 
+            // Initial score display
+            game.DisplayScore();
 
+
+            // Game loop
             while (true)
             {
-                game.Move();
-                Stadium.DrawStadium(game);
-                Player.DrawPlayers(game);
+                game.Move();                // Move players and ball
+                Stadium.DrawStadium(game);  // Redraw the stadium
+                Player.DrawPlayers(game);   // Redraw players
+                game.DisplayScore();        // Always display the score
 
-                Thread.Sleep(400);
+                Thread.Sleep(400);          // Control game speed
             }
-
-          
         }
     }
 }

@@ -14,19 +14,30 @@ public class Team
         Name = name;
     }
 
-    public void StartGame(int width, int height)
+    public void StartGame(int width, int height, bool isHomeTeam)
     {
         Random rnd = new Random();
 
-        
-        const double taane = 1;
+        const double taane = 1; // Margin from the field border
 
         foreach (var player in Players)
         {
-            player.SetPosition(
-                taane + rnd.NextDouble() * (width - 2 * taane),  
-                taane + rnd.NextDouble() * (height - 2 * taane)  
-            );
+            if (isHomeTeam)
+            {
+                // Home team spawns on the left half of the field
+                player.SetPosition(
+                    taane + rnd.NextDouble() * (width / 2 - 2 * taane),   // Left half for home team
+                    taane + rnd.NextDouble() * (height - 2 * taane)      // Random Y position within bounds
+                );
+            }
+            else
+            {
+                // Away team spawns on the right half of the field
+                player.SetPosition(
+                    (width / 2) + taane + rnd.NextDouble() * (width / 2 - 2 * taane),  // Right half for away team
+                    taane + rnd.NextDouble() * (height - 2 * taane)                   // Random Y position within bounds
+                );
+            }
         }
     }
 
@@ -61,12 +72,32 @@ public class Team
             }
         }
 
+
+
         return closestPlayer;
     }
 
     public void Move()
     {
-        GetClosestPlayerToBall().MoveTowardsBall();
-        Players.ForEach(player => player.Move());
+        // Find the closest player for both teams
+        Player closestPlayerHome = this.Game.HomeTeam.GetClosestPlayerToBall();
+        Player closestPlayerAway = this.Game.AwayTeam.GetClosestPlayerToBall();
+
+        // Move the closest player of each team towards the ball
+        closestPlayerHome.MoveTowardsBall();
+        closestPlayerAway.MoveTowardsBall();
+
+        // Loop through all players in the home team
+        foreach (var player in Players)
+        {
+            // Pass the closest player for each team to the player's Move method
+            player.Move(closestPlayerHome == player ? closestPlayerHome : closestPlayerAway);
+        }
+
+        // Loop through all players in the away team
+        foreach (var player in this.Game.AwayTeam.Players)
+        {
+            player.Move(closestPlayerHome == player ? closestPlayerHome : closestPlayerAway);
+        }
     }
 }

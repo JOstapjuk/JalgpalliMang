@@ -1,10 +1,13 @@
 ﻿
 using System;
+using System.Diagnostics;
 
 namespace JalgpalliMang;
 
 public class Player
 {
+    public List<Player> Players { get; set; }
+
     public string Name { get; }
     public double X { get; private set; }
     public double Y { get; private set; }
@@ -46,7 +49,12 @@ public class Player
         var ballPosition = Team!.GetBallPosition();
         var dx = ballPosition.Item1 - X;
         var dy = ballPosition.Item2 - Y;
-        return Math.Sqrt(dx * dx + dy * dy);
+        var distance = Math.Sqrt(dx * dx + dy * dy);
+
+        // Debugging: Output the player's position and the ball's position
+        Debug.WriteLine($"{Name} ({Team.Name}) ({X:F2}, {Y:F2}) sees ball at ({ballPosition.Item1:F2}, {ballPosition.Item2:F2})");
+
+        return distance;
     }
 
     public void MoveTowardsBall()
@@ -54,18 +62,30 @@ public class Player
         var ballPosition = Team!.GetBallPosition();
         var dx = ballPosition.Item1 - X;
         var dy = ballPosition.Item2 - Y;
-        var ratio = Math.Sqrt(dx * dx + dy * dy) / MaxSpeed;
-        _vx = dx / ratio;
-        _vy = dy / ratio;
+        var distance = Math.Sqrt(dx * dx + dy * dy);
+
+        if (distance > 0)
+        {
+            var ratio = MaxSpeed / distance;
+            _vx = dx * ratio;
+            _vy = dy * ratio;
+
+            Debug.WriteLine($"{Name} ({Team.Name}) is moving towards ball from ({X:F2}, {Y:F2}) to ({ballPosition.Item1:F2}, {ballPosition.Item2:F2}))");
+
+
+        }
     }
 
-    public void Move()
+    public void Move(Player closestPlayer)
     {
-        if (Team.GetClosestPlayerToBall() != this)
+
+        if (closestPlayer != this)
         {
             _vx = 0;
             _vy = 0;
+            Debug.WriteLine($"{Name} ({Team.Name}) is not closest to the ball");
         }
+
 
         if (GetDistanceToBall() < BallKickDistance)
         {
@@ -73,7 +93,9 @@ public class Player
                 MaxKickSpeed * _random.NextDouble(),
                 MaxKickSpeed * (_random.NextDouble() - 0.5)
             );
+            Debug.WriteLine($"{Name} ({Team.Name}) kicks the ball");
         }
+
 
         var newX = X + _vx;
         var newY = Y + _vy;
@@ -82,12 +104,16 @@ public class Player
         {
             X = newX;
             Y = newY;
+            Debug.WriteLine($"{Name} ({Team.Name}) moved to ({newX:F2}, {newY:F2})");
         }
         else
         {
             _vx = _vy = 0;
+            Debug.WriteLine($"{Name} ({Team.Name}) hit the boundary");
         }
     }
+
+
 
     public static void DrawPlayers(Game game)
     {
