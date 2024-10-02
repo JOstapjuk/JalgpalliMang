@@ -31,13 +31,11 @@ public class Game
     }
     public (double, double) GetPositionForTeam(Team team, double x, double y)
     {
-        // Home team sees coordinates as-is, away team sees mirrored coordinates
         return team == HomeTeam ? (x, y) : GetPositionForAwayTeam(x, y);
     }
 
     private (double, double) GetPositionForAwayTeam(double x, double y)
     {
-        // Reverse the x-coordinate for the away team, while y remains the same
         return (Stadium.Width - x, y);
     }
 
@@ -69,14 +67,13 @@ public class Game
             AwayTeamScore++;
         }
 
-        // Update the score display without clearing the screen
         DisplayScore();
     }
 
     public void DisplayScore()
     {
-        Console.SetCursorPosition(0, Stadium.Height + 1); // Position below the stadium
-        Console.WriteLine($"Score - Home: {HomeTeamScore} | Away: {AwayTeamScore}");
+        Console.SetCursorPosition(0, Stadium.Height + 1); 
+        Console.WriteLine($"Score : A: {HomeTeamScore} | B: {AwayTeamScore}");
     }
 
     public void Move()

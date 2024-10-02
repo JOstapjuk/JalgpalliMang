@@ -14,11 +14,13 @@ public class Player
     private double _vx, _vy;
     public Team? Team { get; set; } = null;
 
+
     private const double MaxSpeed = 5;
     private const double MaxKickSpeed = 25;
     private const double BallKickDistance = 10;
 
     private Random _random = new Random();
+
 
     public Player(string name)
     {
@@ -51,7 +53,6 @@ public class Player
         var dy = ballPosition.Item2 - Y;
         var distance = Math.Sqrt(dx * dx + dy * dy);
 
-        // Debugging: Output the player's position and the ball's position
         Debug.WriteLine($"{Name} ({Team.Name}) ({X:F2}, {Y:F2}) sees ball at ({ballPosition.Item1:F2}, {ballPosition.Item2:F2})");
 
         return distance;
@@ -81,34 +82,40 @@ public class Player
 
         if (closestPlayer != this)
         {
+
             _vx = 0;
             _vy = 0;
             Debug.WriteLine($"{Name} ({Team.Name}) is not closest to the ball");
+            return; 
         }
 
 
         if (GetDistanceToBall() < BallKickDistance)
         {
-            Team.SetBallSpeed(
-                MaxKickSpeed * _random.NextDouble(),
-                MaxKickSpeed * (_random.NextDouble() - 0.5)
-            );
+
+            double kickSpeedX = MaxKickSpeed * _random.NextDouble();
+            double kickSpeedY = MaxKickSpeed * (_random.NextDouble() - 0.5);
+            Team.SetBallSpeed(kickSpeedX, kickSpeedY);
             Debug.WriteLine($"{Name} ({Team.Name}) kicks the ball");
         }
 
 
-        var newX = X + _vx;
-        var newY = Y + _vy;
+        double newX = X + _vx;
+        double newY = Y + _vy;
         var newAbsolutePosition = Team.Game.GetPositionForTeam(Team, newX, newY);
+
+
         if (Team.Game.Stadium.IsIn(newAbsolutePosition.Item1, newAbsolutePosition.Item2))
         {
-            X = newX;
+            X = newX; 
             Y = newY;
             Debug.WriteLine($"{Name} ({Team.Name}) moved to ({newX:F2}, {newY:F2})");
         }
         else
         {
-            _vx = _vy = 0;
+
+            _vx = 0;
+            _vy = 0;
             Debug.WriteLine($"{Name} ({Team.Name}) hit the boundary");
         }
     }
@@ -144,8 +151,8 @@ public class Player
                 {
                     if ((int)player.X == x && (int)player.Y == y)
                     {
-                        symb = 'B'; 
-                        Console.ForegroundColor = ConsoleColor.Yellow; 
+                        symb = 'B';
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                     }
                 }
 

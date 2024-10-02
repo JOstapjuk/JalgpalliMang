@@ -28,19 +28,17 @@ namespace JalgpalliMang
             Game game = new Game(homeTeam, awayTeam, stadium);
             game.Start();
 
-            // Initial score display
             game.DisplayScore();
 
 
-            // Game loop
             while (true)
             {
-                game.Move();                // Move players and ball
-                Stadium.DrawStadium(game);  // Redraw the stadium
-                Player.DrawPlayers(game);   // Redraw players
-                game.DisplayScore();        // Always display the score
+                game.Move();                
+                Stadium.DrawStadium(game);  
+                Player.DrawPlayers(game);   
+                game.DisplayScore();        
 
-                Thread.Sleep(400);          // Control game speed
+                Thread.Sleep(400);          
             }
         }
     }

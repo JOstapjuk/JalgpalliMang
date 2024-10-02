@@ -28,28 +28,27 @@ namespace JalgpalliMang
         {
             Console.Clear();
 
-            // Draw the stadium borders
+
             for (int y = 0; y <= game.Stadium.Height; y++)
             {
                 for (int x = 0; x <= game.Stadium.Width; x++)
                 {
                     char symb = ' ';
-                    Console.ForegroundColor = ConsoleColor.White; // Default color
+                    Console.ForegroundColor = ConsoleColor.White; 
 
-                    // Draw borders
                     if (x == 0 || x == game.Stadium.Width - 1 || y == 0 || y == game.Stadium.Height - 1)
                     {
-                        symb = '#'; // Border symbol
+                        symb = '#'; 
                         Console.ForegroundColor = ConsoleColor.Blue;
                     }
 
-                    // Draw home goal (left side)
+
                     if (x == 0 && y >= game.Stadium.Height / 2 - 2 && y <= game.Stadium.Height / 2 + 2)
                     {
                         symb = ' ';
                     }
 
-                    // Draw away goal (right side)
+
                     if (x == game.Stadium.Width - 1 && y >= game.Stadium.Height / 2 - 2 && y <= game.Stadium.Height / 2 + 2)
                     {
                         symb = ' ';
